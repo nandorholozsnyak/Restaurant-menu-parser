@@ -13,8 +13,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static co.rodnan.restaurant.domain.CourseType.UNKNOWN;
-
 @ApplicationScoped
 public class GodorRestaurantPort extends HtmlBasedParser implements RestaurantPort {
 
@@ -23,7 +21,7 @@ public class GodorRestaurantPort extends HtmlBasedParser implements RestaurantPo
     private static final String MENU_ELEMENT_CSS_SELECTOR = "body > div.header-wrapper > div.container > div > div.content > div.daily-text > div > div:nth-child({index}) > span.name";
 
     @Override
-    public MenuInformation parseMenu() {
+    public MenuInformation getDailyMenu() {
         Document document = getDocument(URL);
         Elements menuElements = document.select("body > div.header-wrapper > div.container > div > div.content > div.daily-text > div");
         List<MenuItem> menuItems = getMenuItems(document, menuElements);
@@ -46,15 +44,18 @@ public class GodorRestaurantPort extends HtmlBasedParser implements RestaurantPo
     private List<MenuItem> getMenuItems(Document document, Elements menuElements) {
         int menuItemCount = getMenuItemCount(menuElements);
         List<MenuItem> menuItems = new ArrayList<>(menuItemCount);
-        for (int i = 1; i <= menuItemCount; i++) {
-            Elements menuItem = document.select(MENU_ELEMENT_CSS_SELECTOR.replace("{index}", String.valueOf(i)));
+        for (int elementIndex = 1; elementIndex <= menuItemCount; elementIndex++) {
+            Elements menuItem = document.select(MENU_ELEMENT_CSS_SELECTOR.replace("{index}", String.valueOf(elementIndex)));
             String courseName = menuItem.get(0).childNode(0).toString();
-            menuItems.add(MenuItem.builder()
-                    .name(courseName)
-                    .type(UNKNOWN)
-                    .build());
+            menuItems.add(getSpecificMenuItem(elementIndex, courseName));
         }
         return menuItems;
+    }
+
+    private MenuItem getSpecificMenuItem(int elementIndex, String courseName) {
+        return isSoupIndex(elementIndex)
+                ? MenuItem.createSoup(courseName)
+                : MenuItem.createMainCourse(courseName);
     }
 
     private int getMenuItemCount(Elements menuElements) {
@@ -63,5 +64,9 @@ public class GodorRestaurantPort extends HtmlBasedParser implements RestaurantPo
                 .stream()
                 .filter(element -> !(element instanceof TextNode))
                 .count();
+    }
+
+    private boolean isSoupIndex(int index) {
+        return index <= 3;
     }
 }

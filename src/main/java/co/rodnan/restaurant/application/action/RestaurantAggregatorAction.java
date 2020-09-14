@@ -10,8 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @ApplicationScoped
@@ -20,12 +20,12 @@ public class RestaurantAggregatorAction {
 
     private final Instance<RestaurantPort> menuParsers;
 
+    //TODO Make the process async with CompletableFuture or antyhing else.
     public RestaurantListResponse getRestaurantMenus() {
-        List<Restaurant> restaurants = new LinkedList<>();
-        for (RestaurantPort restaurantPort : menuParsers) {
-            Restaurant restaurant = createRestaurant(restaurantPort);
-            restaurants.add(restaurant);
-        }
+        List<Restaurant> restaurants = menuParsers.stream()
+                .parallel()
+                .map(this::createRestaurant)
+                .collect(Collectors.toList());
         return new RestaurantListResponse(restaurants);
     }
 
@@ -33,7 +33,7 @@ public class RestaurantAggregatorAction {
         RestaurantProcessStatus processStatus = RestaurantProcessStatus.OK;
         MenuInformation menuInformation = MenuInformation.EMPTY;
         try {
-            menuInformation = restaurantPort.parseMenu();
+            menuInformation = restaurantPort.getDailyMenu();
         } catch (Exception e) {
             processStatus = RestaurantProcessStatus.FAILED;
             log.warn("Error during parsing menu of the restaurant:" + restaurantPort.getRestaurantName(), e);

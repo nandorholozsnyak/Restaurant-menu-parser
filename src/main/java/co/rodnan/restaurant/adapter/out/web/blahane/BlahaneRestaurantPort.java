@@ -2,7 +2,6 @@ package co.rodnan.restaurant.adapter.out.web.blahane;
 
 import co.rodnan.restaurant.adapter.out.web.common.HtmlBasedParser;
 import co.rodnan.restaurant.application.port.out.RestaurantPort;
-import co.rodnan.restaurant.domain.CourseType;
 import co.rodnan.restaurant.domain.MenuInformation;
 import co.rodnan.restaurant.domain.MenuItem;
 import org.jsoup.nodes.Document;
@@ -23,7 +22,7 @@ public class BlahaneRestaurantPort extends HtmlBasedParser implements Restaurant
     public static final String MAIN_COURSE_SELECTOR = "body > div.main > div.right > div:nth-child(1) > p:nth-child({index})";
 
     @Override
-    public MenuInformation parseMenu() {
+    public MenuInformation getDailyMenu() {
         Document document = getDocument(URL);
         List<MenuItem> menuItems = new ArrayList<>(8);
         menuItems.addAll(collectSoups(document));
@@ -38,10 +37,7 @@ public class BlahaneRestaurantPort extends HtmlBasedParser implements Restaurant
         List<MenuItem> menuItems = new ArrayList<>(5);
         for (int i = 4; i <= 7; i++) {
             Elements soupElement = document.select(MAIN_COURSE_SELECTOR.replace("{index}", String.valueOf(i)));
-            menuItems.add(MenuItem.builder()
-                    .name(soupElement.get(0).childNode(0).toString())
-                    .type(CourseType.MAIN_COURSE)
-                    .build());
+            menuItems.add(MenuItem.createMainCourse(soupElement.get(0).childNode(0).toString().replace("&nbsp;", "")));
         }
         return menuItems;
     }
@@ -51,10 +47,7 @@ public class BlahaneRestaurantPort extends HtmlBasedParser implements Restaurant
         List<MenuItem> menuItems = new ArrayList<>(3);
         for (int i = 1; i <= 3; i++) {
             Elements soupElement = document.select(SOUP_SELECTOR.replace("{index}", String.valueOf(i)));
-            menuItems.add(MenuItem.builder()
-                    .name(soupElement.get(0).childNode(0).toString())
-                    .type(CourseType.SOUP)
-                    .build());
+            menuItems.add(MenuItem.createSoup(soupElement.get(0).childNode(0).toString()));
         }
         return menuItems;
     }

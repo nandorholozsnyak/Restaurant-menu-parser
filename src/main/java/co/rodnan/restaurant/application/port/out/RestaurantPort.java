@@ -12,7 +12,7 @@ public interface RestaurantPort {
      *
      * @return
      */
-    MenuInformation parseMenu();
+    MenuInformation getDailyMenu();
 
     /**
      * Returns the name of the restaurant.

@@ -1,7 +1,6 @@
 package co.rodnan.restaurant.adapter.out.web.beerandwurst;
 
 import co.rodnan.restaurant.application.port.out.RestaurantPort;
-import co.rodnan.restaurant.domain.CourseType;
 import co.rodnan.restaurant.domain.MenuInformation;
 import co.rodnan.restaurant.domain.MenuItem;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -22,12 +21,12 @@ public class BeerAndWurstRestaurantPort implements RestaurantPort {
     }
 
     @Override
-    public MenuInformation parseMenu() {
+    public MenuInformation getDailyMenu() {
         DayOfWeek dayOfWeek = LocalDate.now().getDayOfWeek();
         BeerAndWurstMenuResponse menuResponse = beerAndWurstClient.getMenu();
         BeerAndWurstMenu wurstMenu = getTodaysMenu(dayOfWeek, menuResponse);
         List<MenuItem> menuItems = getMenuItems(wurstMenu);
-        return new MenuInformation(new BigDecimal(menuResponse.getPrice()), menuItems);
+        return new MenuInformation(dayOfWeek, new BigDecimal(menuResponse.getPrice()), menuItems);
     }
 
     @Override
@@ -42,10 +41,11 @@ public class BeerAndWurstRestaurantPort implements RestaurantPort {
 
     private List<MenuItem> getMenuItems(BeerAndWurstMenu wurstMenu) {
         return List.of(
-                new MenuItem(wurstMenu.getSoup(), CourseType.SOUP),
-                new MenuItem(wurstMenu.getMainCourse(), CourseType.MAIN_COURSE),
-                new MenuItem(wurstMenu.getMainCourseB(), CourseType.MAIN_COURSE),
-                new MenuItem(wurstMenu.getDessert(), CourseType.DESSERT));
+                MenuItem.createSoup(wurstMenu.getSoup().trim()),
+                MenuItem.createMainCourseA(wurstMenu.getMainCourse().trim()),
+                MenuItem.createMainCourseB(wurstMenu.getMainCourseB().trim()),
+                MenuItem.createDessert(wurstMenu.getDessert().trim())
+        );
     }
 
     private BeerAndWurstMenu getTodaysMenu(DayOfWeek dayOfWeek, BeerAndWurstMenuResponse menuResponse) {
