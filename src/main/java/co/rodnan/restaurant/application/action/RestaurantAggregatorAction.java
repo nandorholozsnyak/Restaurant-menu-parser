@@ -1,6 +1,6 @@
 package co.rodnan.restaurant.application.action;
 
-import co.rodnan.restaurant.application.port.out.RestaurantMenuParser;
+import co.rodnan.restaurant.application.port.out.RestaurantPort;
 import co.rodnan.restaurant.domain.MenuInformation;
 import co.rodnan.restaurant.domain.Restaurant;
 import co.rodnan.restaurant.domain.RestaurantListResponse;
@@ -18,26 +18,32 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RestaurantAggregatorAction {
 
-    private final Instance<RestaurantMenuParser> menuParsers;
+    private final Instance<RestaurantPort> menuParsers;
 
     public RestaurantListResponse getRestaurantMenus() {
         List<Restaurant> restaurants = new LinkedList<>();
-        for (RestaurantMenuParser restaurantMenuParser : menuParsers) {
-            Restaurant restaurant = createRestaurant(restaurantMenuParser);
+        for (RestaurantPort restaurantPort : menuParsers) {
+            Restaurant restaurant = createRestaurant(restaurantPort);
             restaurants.add(restaurant);
         }
         return new RestaurantListResponse(restaurants);
     }
 
-    private Restaurant createRestaurant(RestaurantMenuParser restaurantMenuParser) {
+    private Restaurant createRestaurant(RestaurantPort restaurantPort) {
         RestaurantProcessStatus processStatus = RestaurantProcessStatus.OK;
         MenuInformation menuInformation = MenuInformation.EMPTY;
         try {
-            menuInformation = restaurantMenuParser.parseMenu();
+            menuInformation = restaurantPort.parseMenu();
         } catch (Exception e) {
             processStatus = RestaurantProcessStatus.FAILED;
-            log.warn("Error during parsing menu of the restaurant:" + restaurantMenuParser.getRestaurantName(), e);
+            log.warn("Error during parsing menu of the restaurant:" + restaurantPort.getRestaurantName(), e);
         }
-        return new Restaurant(restaurantMenuParser.getRestaurantName(), menuInformation.getMenuItems(), menuInformation.getPrice(), processStatus);
+        return Restaurant.builder()
+                .name(restaurantPort.getRestaurantName())
+                .identifier(restaurantPort.getRestaurantId())
+                .menuItems(menuInformation.getMenuItems())
+                .menuPrice(menuInformation.getPrice())
+                .status(processStatus)
+                .build();
     }
 }

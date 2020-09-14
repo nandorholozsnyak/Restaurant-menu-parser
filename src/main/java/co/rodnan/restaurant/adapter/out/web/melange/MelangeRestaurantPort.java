@@ -1,20 +1,19 @@
 package co.rodnan.restaurant.adapter.out.web.melange;
 
-import co.rodnan.restaurant.application.port.out.RestaurantMenuParser;
+import co.rodnan.restaurant.adapter.out.web.common.HtmlBasedParser;
+import co.rodnan.restaurant.application.port.out.RestaurantPort;
 import co.rodnan.restaurant.domain.CourseType;
 import co.rodnan.restaurant.domain.MenuInformation;
 import co.rodnan.restaurant.domain.MenuItem;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
 @ApplicationScoped
-public class MelangeRestaurantMenuParser implements RestaurantMenuParser {
+public class MelangeRestaurantPort extends HtmlBasedParser implements RestaurantPort {
 
     private static final String URL = "http://www.melangekavehaz.hu";
 
@@ -28,8 +27,13 @@ public class MelangeRestaurantMenuParser implements RestaurantMenuParser {
         return "Melange Kávéház";
     }
 
+    @Override
+    public String getRestaurantId() {
+        return "melange";
+    }
+
     private List<MenuItem> getMenu() {
-        Document doc = getDocument();
+        Document doc = getDocument(URL);
         MenuItem soup = getSoup(doc);
         MenuItem firstMainCourse = getFirstMainCourse(doc);
         MenuItem secondMainCourse = getSecondMainCourse(doc);
@@ -55,13 +59,4 @@ public class MelangeRestaurantMenuParser implements RestaurantMenuParser {
         return new MenuItem(soupFirstPart.text() + " " + soupSecondPart.text() + " " + soupThirdPart.text(), CourseType.SOUP);
     }
 
-    private Document getDocument() {
-        Document doc;
-        try {
-            doc = Jsoup.connect(URL).get();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return doc;
-    }
 }

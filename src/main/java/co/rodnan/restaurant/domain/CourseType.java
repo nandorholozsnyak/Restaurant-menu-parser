@@ -8,5 +8,7 @@ public enum CourseType {
 
     DESSERT,
 
+    UNKNOWN,
+
 
 }
