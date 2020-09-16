@@ -1,6 +1,7 @@
 package co.rodnan.restaurant.application.port.out;
 
 import co.rodnan.restaurant.domain.MenuInformation;
+import co.rodnan.restaurant.domain.RestaurantInformation;
 
 /**
  *
@@ -15,17 +16,8 @@ public interface RestaurantPort {
     MenuInformation getDailyMenu();
 
     /**
-     * Returns the name of the restaurant.
-     *
-     * @return name of the restaurant.
+     * @return
      */
-    String getRestaurantName();
-
-    /**
-     * Returns the custom identifier of the restaurant.
-     *
-     * @return identifier of the restaurant.
-     */
-    String getRestaurantId();
+    RestaurantInformation getRestaurantInfo();
 
 }

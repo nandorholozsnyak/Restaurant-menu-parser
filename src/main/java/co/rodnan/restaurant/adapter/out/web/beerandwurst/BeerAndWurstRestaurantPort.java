@@ -3,6 +3,7 @@ package co.rodnan.restaurant.adapter.out.web.beerandwurst;
 import co.rodnan.restaurant.application.port.out.RestaurantPort;
 import co.rodnan.restaurant.domain.MenuInformation;
 import co.rodnan.restaurant.domain.MenuItem;
+import co.rodnan.restaurant.domain.RestaurantInformation;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -13,6 +14,8 @@ import java.util.List;
 
 @ApplicationScoped
 public class BeerAndWurstRestaurantPort implements RestaurantPort {
+
+    private static final String URL = "https://www.beerandwurst.hu";
 
     private final BeerAndWurstClient beerAndWurstClient;
 
@@ -30,13 +33,12 @@ public class BeerAndWurstRestaurantPort implements RestaurantPort {
     }
 
     @Override
-    public String getRestaurantName() {
-        return "Beer&Wurst";
-    }
-
-    @Override
-    public String getRestaurantId() {
-        return "beer_and_wurst";
+    public RestaurantInformation getRestaurantInfo() {
+        return RestaurantInformation.builder()
+                .name("Beer&Wurst")
+                .identifier("beer_and_wurst")
+                .url(URL)
+                .build();
     }
 
     private List<MenuItem> getMenuItems(BeerAndWurstMenu wurstMenu) {

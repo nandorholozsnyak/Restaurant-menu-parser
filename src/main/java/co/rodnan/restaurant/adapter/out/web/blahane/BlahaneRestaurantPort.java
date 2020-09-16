@@ -4,6 +4,7 @@ import co.rodnan.restaurant.adapter.out.web.common.HtmlBasedParser;
 import co.rodnan.restaurant.application.port.out.RestaurantPort;
 import co.rodnan.restaurant.domain.MenuInformation;
 import co.rodnan.restaurant.domain.MenuItem;
+import co.rodnan.restaurant.domain.RestaurantInformation;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
@@ -33,6 +34,15 @@ public class BlahaneRestaurantPort extends HtmlBasedParser implements Restaurant
                 .build();
     }
 
+    @Override
+    public RestaurantInformation getRestaurantInfo() {
+        return RestaurantInformation.builder()
+                .name("Blaháné Étterem")
+                .identifier("blahane")
+                .url(URL)
+                .build();
+    }
+
     private List<MenuItem> collectMainCourses(Document document) {
         List<MenuItem> menuItems = new ArrayList<>(5);
         for (int i = 4; i <= 7; i++) {
@@ -50,15 +60,5 @@ public class BlahaneRestaurantPort extends HtmlBasedParser implements Restaurant
             menuItems.add(MenuItem.createSoup(soupElement.get(0).childNode(0).toString()));
         }
         return menuItems;
-    }
-
-    @Override
-    public String getRestaurantName() {
-        return "Blaháné Étterem";
-    }
-
-    @Override
-    public String getRestaurantId() {
-        return "blahane";
     }
 }

@@ -7,13 +7,11 @@ import lombok.Value;
 @Value
 @Builder
 @RequiredArgsConstructor
-public class Restaurant {
+public class RestaurantInformation {
 
     String name;
     String identifier;
     String url;
-    String logoUrl;
-    //List<MenuItem> menuItems;
-    //BigDecimal menuPrice;
-    RestaurantProcessStatus status;
+    String logo;
+
 }

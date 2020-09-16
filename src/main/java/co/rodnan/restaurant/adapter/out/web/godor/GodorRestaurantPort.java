@@ -4,6 +4,7 @@ import co.rodnan.restaurant.adapter.out.web.common.HtmlBasedParser;
 import co.rodnan.restaurant.application.port.out.RestaurantPort;
 import co.rodnan.restaurant.domain.MenuInformation;
 import co.rodnan.restaurant.domain.MenuItem;
+import co.rodnan.restaurant.domain.RestaurantInformation;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
@@ -32,13 +33,12 @@ public class GodorRestaurantPort extends HtmlBasedParser implements RestaurantPo
     }
 
     @Override
-    public String getRestaurantName() {
-        return "Gödör";
-    }
-
-    @Override
-    public String getRestaurantId() {
-        return "godor";
+    public RestaurantInformation getRestaurantInfo() {
+        return RestaurantInformation.builder()
+                .name("Gödör")
+                .identifier("godor")
+                .url(URL)
+                .build();
     }
 
     private List<MenuItem> getMenuItems(Document document, Elements menuElements) {
