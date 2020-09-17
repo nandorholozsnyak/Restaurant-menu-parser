@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
+import java.math.BigDecimal;
+
 @Value
 @Builder
 @RequiredArgsConstructor
@@ -11,6 +13,7 @@ public class MenuItem {
 
     String name;
     CourseType type;
+    BigDecimal price;
 
     public static MenuItem createSoup(String name) {
         return MenuItem.builder()

@@ -13,7 +13,4 @@ public class Restaurant {
     String identifier;
     String url;
     String logoUrl;
-    //List<MenuItem> menuItems;
-    //BigDecimal menuPrice;
-    RestaurantProcessStatus status;
 }

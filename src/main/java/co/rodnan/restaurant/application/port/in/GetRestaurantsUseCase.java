@@ -10,4 +10,10 @@ public interface GetRestaurantsUseCase {
      * @return
      */
     List<Restaurant> getRestaurants();
+
+    /**
+     * @param identifier
+     * @return
+     */
+    Restaurant getRestaurantByIdentifier(String identifier);
 }
