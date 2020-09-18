@@ -20,8 +20,6 @@ public class MelangeDailyMenuParser extends HtmlBasedParser {
 
     private static final String URL = "http://www.melangekavehaz.hu/menu/heti_menu_ajanlatunk_{period}";
 
-    private static final String COLUMN_SELECTOR = "#oszlop-{index}";
-
     private static final String DAY_SELECTOR = "#oszlop-{index} > div.nap";
 
     private static final String SOUP_SELECTOR = "#oszlop-{index} > p:nth-child(2)";
@@ -29,14 +27,6 @@ public class MelangeDailyMenuParser extends HtmlBasedParser {
     private static final String MAIN_COURSE_SELECTOR = "#oszlop-{index} > p:nth-child(3)";
 
     private static final String PRICE_SELECTOR = "#oszlop-{index} > div.ar > span";
-
-    private static final Map<String, DayOfWeek> HUNGARIAN_DAYS = Map.ofEntries(
-            Map.entry("Hétfő", DayOfWeek.MONDAY),
-            Map.entry("Kedd", DayOfWeek.TUESDAY),
-            Map.entry("Szerda", DayOfWeek.WEDNESDAY),
-            Map.entry("Csütörtök", DayOfWeek.THURSDAY),
-            Map.entry("Péntek", DayOfWeek.FRIDAY)
-    );
 
     List<MelangeDailyMenu> getWeeklyMenuItem() {
         String period = getDatePeriod();
