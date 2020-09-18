@@ -5,6 +5,7 @@ import co.rodnan.restaurant.application.port.out.RestaurantPort;
 import co.rodnan.restaurant.domain.MenuInformation;
 import co.rodnan.restaurant.domain.MenuItem;
 import co.rodnan.restaurant.domain.RestaurantInformation;
+import lombok.RequiredArgsConstructor;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class BlahaneRestaurantPort extends HtmlBasedParser implements RestaurantPort {
 
     private static final String URL = "http://www.menurendeles.hu/";
@@ -22,6 +24,8 @@ public class BlahaneRestaurantPort extends HtmlBasedParser implements Restaurant
 
     public static final String MAIN_COURSE_SELECTOR = "body > div.main > div.right > div:nth-child(1) > p:nth-child({index})";
 
+    private final BlahaneMenuProperties blahaneMenuProperties;
+
     @Override
     public MenuInformation getDailyMenu() {
         Document document = getDocument(URL);
@@ -29,7 +33,7 @@ public class BlahaneRestaurantPort extends HtmlBasedParser implements Restaurant
         menuItems.addAll(collectSoups(document));
         menuItems.addAll(collectMainCourses(document));
         return MenuInformation.builder()
-                .price(BigDecimal.ZERO)
+                .price(blahaneMenuProperties.getMenuPrice())
                 .menuItems(menuItems)
                 .build();
     }

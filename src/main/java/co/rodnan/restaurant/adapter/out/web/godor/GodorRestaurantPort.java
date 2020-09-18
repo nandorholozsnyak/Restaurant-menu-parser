@@ -5,21 +5,24 @@ import co.rodnan.restaurant.application.port.out.RestaurantPort;
 import co.rodnan.restaurant.domain.MenuInformation;
 import co.rodnan.restaurant.domain.MenuItem;
 import co.rodnan.restaurant.domain.RestaurantInformation;
+import lombok.RequiredArgsConstructor;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 @ApplicationScoped
+@RequiredArgsConstructor
 public class GodorRestaurantPort extends HtmlBasedParser implements RestaurantPort {
 
     private static final String URL = "http://www.godor.hu/";
 
     private static final String MENU_ELEMENT_CSS_SELECTOR = "body > div.header-wrapper > div.container > div > div.content > div.daily-text > div > div:nth-child({index}) > span.name";
+
+    private final GodorMenuProperties godorMenuProperties;
 
     @Override
     public MenuInformation getDailyMenu() {
@@ -27,7 +30,7 @@ public class GodorRestaurantPort extends HtmlBasedParser implements RestaurantPo
         Elements menuElements = document.select("body > div.header-wrapper > div.container > div > div.content > div.daily-text > div");
         List<MenuItem> menuItems = getMenuItems(document, menuElements);
         return MenuInformation.builder()
-                .price(BigDecimal.ZERO)
+                .price(godorMenuProperties.getMenuPrice())
                 .menuItems(menuItems)
                 .build();
     }
@@ -54,8 +57,8 @@ public class GodorRestaurantPort extends HtmlBasedParser implements RestaurantPo
 
     private MenuItem getSpecificMenuItem(int elementIndex, String courseName) {
         return isSoupIndex(elementIndex)
-                ? MenuItem.createSoup(courseName)
-                : MenuItem.createMainCourse(courseName);
+                ? MenuItem.createSoup(courseName, godorMenuProperties.getSoupPrice())
+                : MenuItem.createMainCourse(courseName, godorMenuProperties.getMainCoursePrice());
     }
 
     private int getMenuItemCount(Elements menuElements) {

@@ -22,9 +22,25 @@ public class MenuItem {
                 .build();
     }
 
+    public static MenuItem createSoup(String name, BigDecimal price) {
+        return MenuItem.builder()
+                .name(name)
+                .price(price)
+                .type(CourseType.SOUP)
+                .build();
+    }
+
     public static MenuItem createMainCourse(String name) {
         return MenuItem.builder()
                 .name(name)
+                .type(CourseType.MAIN_COURSE)
+                .build();
+    }
+
+    public static MenuItem createMainCourse(String name, BigDecimal price) {
+        return MenuItem.builder()
+                .name(name)
+                .price(price)
                 .type(CourseType.MAIN_COURSE)
                 .build();
     }
